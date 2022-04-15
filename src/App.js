@@ -1,21 +1,21 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 
 const data = [
   {
-    id: "chord 1",
+    id: "chord_1",
     key: "Q",
     url: "https://s3.amazonaws.com/freecodecamp/drums/Chord_1.mp3",
   },
   
   {
-    id: "chord 2",
+    id: "chord_2",
     key: "W",
     url: "https://s3.amazonaws.com/freecodecamp/drums/Chord_2.mp3",
   },
 
   {
-    id: "chord 3",
+    id: "chord_3",
     key: "E",
     url: "https://s3.amazonaws.com/freecodecamp/drums/Chord_3.mp3",
   },
@@ -58,28 +58,13 @@ const data = [
 ]
 
 const inactiveStyle = {
-  width: 80,
-  height: 80,
-  fontSize: 20,
+  width: 100,
+  height: 100,
   backgroundColor: "white",
   color: "black",
   border: "2px solid black",
   borderRadius: 10
 }
-class Display extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div id="display">
-
-      </div>
-    )
-  }
-}
-
 class DrumPad extends React.Component {
   constructor(props) {
     super(props);
@@ -104,7 +89,8 @@ class DrumPad extends React.Component {
   playSound() {
     let sound = document.getElementById(this.props.getKey);
     sound.currentTime = 0;
-    sound.play()
+    sound.play();
+    this.props.display(this.props.getId.replace(/_|-/g, " "))
   }
 
   render() {
@@ -119,8 +105,8 @@ class DrumPad extends React.Component {
         <audio 
           id={this.props.getKey}
           className="clip"
+          src={this.props.getSrc}
         >
-          <source src={this.props.getSrc} type="audio/mp3" />
         </audio>
       </button>
     )
@@ -129,9 +115,17 @@ class DrumPad extends React.Component {
 class DrumMachine extends React.Component {
   constructor(props) {
     super(props);
+    this.getDisplay = this.getDisplay.bind(this);
     this.state = {
       style: inactiveStyle,
+      display: ""
     }
+  }
+
+  getDisplay(name) {
+    this.setState({
+      display: name
+    })
   }
 
   renderDrumPad(i) {
@@ -141,6 +135,7 @@ class DrumMachine extends React.Component {
         getKey={data[i].key}
         getStyle={this.state.style}
         getSrc={data[i].url}
+        display={this.getDisplay}
       />
     )
   }
@@ -148,21 +143,25 @@ class DrumMachine extends React.Component {
   render() {
     return (
       <div id="drum-machine">
-        <Display />
-        <div className="row">
-          {this.renderDrumPad(0)}
-          {this.renderDrumPad(1)}
-          {this.renderDrumPad(2)}
+        <div id="display">
+          <p>{this.state.display}</p>
         </div>
-        <div className="row">
-          {this.renderDrumPad(3)}
-          {this.renderDrumPad(4)}
-          {this.renderDrumPad(5)}
-        </div>
-        <div className="row">
-          {this.renderDrumPad(6)}
-          {this.renderDrumPad(7)}
-          {this.renderDrumPad(8)}
+        <div className="container">
+          <div className="row">
+            {this.renderDrumPad(0)}
+            {this.renderDrumPad(1)}
+            {this.renderDrumPad(2)}
+          </div>
+          <div className="row">
+            {this.renderDrumPad(3)}
+            {this.renderDrumPad(4)}
+            {this.renderDrumPad(5)}
+          </div>
+          <div className="row">
+            {this.renderDrumPad(6)}
+            {this.renderDrumPad(7)}
+            {this.renderDrumPad(8)}
+          </div>
         </div>
       </div>
     )
