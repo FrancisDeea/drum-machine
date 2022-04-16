@@ -63,6 +63,17 @@ const inactiveStyle = {
   backgroundColor: "white",
   color: "black",
   border: "2px solid black",
+  boxShadow: "2px 2px 0px gray",
+  borderRadius: 10
+};
+
+const activeStyle = {
+  width: 100,
+  height: 100,
+  backgroundColor: "orange",
+  position: "relative",
+  top: 5,
+  color: "black",
   borderRadius: 10
 }
 class DrumPad extends React.Component {
@@ -70,6 +81,10 @@ class DrumPad extends React.Component {
     super(props);
     this.playSound = this.playSound.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.activateStyle = this.activateStyle.bind(this);
+    this.state = {
+      style: inactiveStyle,
+    }
   }
 
   componentDidMount() {
@@ -86,17 +101,31 @@ class DrumPad extends React.Component {
     }
   }
 
+  activateStyle() {
+    if (this.state.style.backgroundColor === "white") {
+      this.setState({
+        style: activeStyle,
+      })
+    } else {
+      this.setState({
+        style: inactiveStyle,
+      })
+    }
+  }
+
   playSound() {
     let sound = document.getElementById(this.props.getKey);
     sound.currentTime = 0;
     sound.play();
-    this.props.display(this.props.getId.replace(/_|-/g, " "))
+    this.props.display(this.props.getId.replace(/_|-/g, " "));
+    this.activateStyle();
+    setTimeout(() => this.activateStyle(), 100)
   }
 
   render() {
     return (
       <button
-        style={this.props.getStyle}
+        style={this.state.style}
         className="drum-pad"
         id={this.props.getId}
         onClick={this.playSound}
@@ -117,7 +146,6 @@ class DrumMachine extends React.Component {
     super(props);
     this.getDisplay = this.getDisplay.bind(this);
     this.state = {
-      style: inactiveStyle,
       display: ""
     }
   }
@@ -133,7 +161,6 @@ class DrumMachine extends React.Component {
       <DrumPad
         getId={data[i].id}
         getKey={data[i].key}
-        getStyle={this.state.style}
         getSrc={data[i].url}
         display={this.getDisplay}
       />
